@@ -1,11 +1,12 @@
 ﻿using System.IO.Pipelines;
+using BenchmarkDotNet.Running;
 using FastXmlWriter;
 
 namespace Samples;
 
-internal class Program
+public class Program
 {
-    async static Task Main(string[] _)
+    public static void Main(string[] _)
     {
         using var stream = File.Create("sample.svg", 0);
         var writer = PipeWriter.Create(stream);
@@ -57,7 +58,8 @@ internal class Program
 
         xmlWriter.WriteEndElement("svg"u8);
 
-        await writer.FlushAsync();
-        await writer.CompleteAsync();
+        writer.Complete();
+
+        var summary = BenchmarkRunner.Run(typeof(Program).Assembly);
     }
 }
